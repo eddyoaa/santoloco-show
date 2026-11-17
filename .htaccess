@@ -1,0 +1,5 @@
+# Falls der Webserver auf den Projektordner statt auf public/ zeigt:
+<FilesMatch "^(config\.php|config\.sample\.php|README\.md)$">
+  Require all denied
+</FilesMatch>
+Options -Indexes
