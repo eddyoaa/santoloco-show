@@ -44,5 +44,6 @@
 
 <div class="card">
   <?php partial('schedule', ['week' => $week, 'people' => $people, 'shifts' => $shifts, 'editable' => true, 'highlight' => null]); ?>
-  <p class="muted small" style="margin-top:10px">Tipp: Mit „+“ in einem Feld legst du dort direkt eine Schicht an. Fahre über eine Schicht, um sie zu bearbeiten oder zu löschen.</p>
+  <p class="muted small" style="margin-top:10px">Tipp: Schichten per <strong>Drag &amp; Drop</strong> auf einen anderen Tag oder Mitarbeiter ziehen. Mit gedrückter <strong>Alt-Taste</strong> (Mac: Option) wird kopiert. Am Handy oder Tablet die Schicht kurz gedrückt halten und dann ziehen. Mit „+“ legst du in einem Feld direkt eine Schicht an, über ✎ und ✕ bearbeitest oder löschst du sie.</p>
 </div>
+<script src="assets/schedule.js?v=1" defer></script>

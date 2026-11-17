@@ -14,7 +14,7 @@ foreach ($shifts as $s) {
 $today = date('Y-m-d');
 ?>
 <div class="table-wrap">
-<table class="schedule">
+<table class="schedule"<?php if ($editable): ?> data-dnd data-csrf="<?= e(csrf_token()) ?>" data-move-url="<?= e(url('admin/shifts', ['week' => $week])) ?>"<?php endif; ?>>
   <thead>
     <tr>
       <th style="width:170px">Mitarbeiter</th>
@@ -31,9 +31,9 @@ $today = date('Y-m-d');
           <span class="person"><span class="avatar sm" style="background:<?= e($p['color']) ?>"><?= e(initials($p['name'])) ?></span><?= e($p['name']) ?></span>
         </td>
         <?php for ($i = 0; $i < 7; $i++): $d = add_days($week, $i); ?>
-          <td class="<?= $d === $today ? 'today-col' : '' ?>">
+          <td class="<?= $d === $today ? 'today-col' : '' ?>"<?php if ($editable): ?> data-user="<?= (int) $p['id'] ?>" data-date="<?= e($d) ?>"<?php endif; ?>>
             <?php foreach ($byCell[$p['id']][$d] ?? [] as $s): $sum += shift_minutes($s); ?>
-              <span class="shift" style="background:<?= e($p['color']) ?>">
+              <span class="shift" style="background:<?= e($p['color']) ?>"<?php if ($editable): ?> data-id="<?= (int) $s['id'] ?>" title="Ziehen zum Verschieben, mit Alt-Taste kopieren"<?php endif; ?>>
                 <span class="t"><?= e(fmt_time($s['start_at'])) ?>–<?= e(fmt_time($s['end_at'])) ?></span>
                 <?php if ($s['note']): ?><span class="n"><?= e($s['note']) ?></span><?php endif; ?>
                 <?php if ($editable): ?>

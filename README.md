@@ -10,7 +10,7 @@ Weitere Ansichten: [Schichtplan](docs/screenshots/2_schichtplan.png) · [Auswert
 
 **Admin (Chef)**
 - Übersicht: Wer ist gerade im Laden, Schichten heute mit Pünktlichkeit, Stunden der Woche, offene Punkte
-- Schichtplan: Wochenansicht, Schichten anlegen, bearbeiten und löschen, Vorwoche übernehmen, Überschneidungen werden erkannt
+- Schichtplan: Wochenansicht, Schichten per Drag & Drop verschieben (mit Alt-Taste kopieren), anlegen, bearbeiten und löschen, Vorwoche übernehmen, Überschneidungen werden erkannt
 - Zeiten: alle Buchungen ansehen, nachtragen, korrigieren, stornieren und Hinweise abhaken
 - Auswertungen pro Monat: gearbeitet und geplant, Plus/Minus, Verspätungen, Fehltage, fehlende Stempel, Verlauf nach Wochen, CSV-Export
 - Mitarbeiter: Konten anlegen, Soll-Stunden und Rolle festlegen, Passwort zurücksetzen, deaktivieren

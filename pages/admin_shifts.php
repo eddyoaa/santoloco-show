@@ -37,6 +37,44 @@ if (is_post()) {
         redirect('admin/shifts', ['week' => $week]);
     }
 
+    if ($do === 'move') {
+        // Drag & Drop: Schicht auf anderen Tag und/oder Mitarbeiter verschieben (copy=1: kopieren)
+        header('Content-Type: application/json; charset=utf-8');
+        $s = one('SELECT s.*, u.name FROM shifts s JOIN users u ON u.id = s.user_id WHERE s.id = ?', [(int) input('id')]);
+        $target = one('SELECT * FROM users WHERE id = ? AND active = 1', [(int) input('user_id')]);
+        $date = input('date');
+        $copy = input('copy') === '1';
+        if (!$s || !$target || !valid_date($date)) {
+            http_response_code(422);
+            exit(json_encode(['ok' => false, 'message' => 'Schicht oder Ziel nicht gefunden.']));
+        }
+        $duration = ts($s['end_at']) - ts($s['start_at']);
+        $start = $date . ' ' . date('H:i:s', ts($s['start_at']));
+        $end = date('Y-m-d H:i:s', ts($start) + $duration);
+        if (!$copy && (int) $s['user_id'] === (int) $target['id'] && $start === $s['start_at']) {
+            exit(json_encode(['ok' => true, 'unchanged' => true]));
+        }
+        $overlap = val(
+            'SELECT COUNT(*) FROM shifts WHERE user_id = ? AND start_at < ? AND end_at > ? AND id <> ?',
+            [$target['id'], $end, $start, $copy ? 0 : $s['id']]
+        );
+        if ($overlap) {
+            http_response_code(409);
+            exit(json_encode(['ok' => false, 'message' => "{$target['name']} hat am " . fmt_day($start) . ' schon eine Schicht in dieser Zeit.'], JSON_UNESCAPED_UNICODE));
+        }
+        $what = fmt_time($start) . '–' . fmt_time($end);
+        if ($copy) {
+            insert('shifts', ['user_id' => $target['id'], 'start_at' => $start, 'end_at' => $end, 'note' => $s['note'], 'created_at' => now_str()]);
+            audit('schicht_kopiert', "{$s['name']} " . fmt_dt($s['start_at']) . " → {$target['name']} " . fmt_day($start) . " $what");
+            flash("Schicht kopiert: {$target['name']}, " . fmt_day($start) . " $what.");
+        } else {
+            q('UPDATE shifts SET user_id = ?, start_at = ?, end_at = ? WHERE id = ?', [$target['id'], $start, $end, $s['id']]);
+            audit('schicht_verschoben', "{$s['name']} " . fmt_dt($s['start_at']) . " → {$target['name']} " . fmt_day($start) . " $what");
+            flash("Schicht verschoben: {$target['name']}, " . fmt_day($start) . " $what.");
+        }
+        exit(json_encode(['ok' => true]));
+    }
+
     if ($do === 'save') {
         $id = (int) input('id');
         $userId = (int) input('user_id');
